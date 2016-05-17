@@ -1,0 +1,17 @@
+
+include_directories( "${PROJECT_SOURCE_DIR}")
+
+set( SOURCES
+   Server.cpp
+   Socket.cpp
+   main.cpp
+)
+
+add_executable( qserver ${SOURCES} )
+
+target_link_libraries( qserver Qt5::Widgets Qt5::Network )
+
+install( TARGETS qserver DESTINATION bin )
+
+#add_subdirectory( tests )
+
