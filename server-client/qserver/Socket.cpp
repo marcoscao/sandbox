@@ -1,4 +1,5 @@
 #include "Socket.h"
+#include "qcore/Messages.h"
 
 #include <QtCore/QEventLoop>
 #include <QtNetwork/QTcpSocket>
@@ -44,6 +45,9 @@ namespace core {
      
       qt_socket_->setSocketDescriptor( descriptor_ );
 
+      QByteArray msg = "Hi guy! I'm the Walrus";
+      qt_socket_->write( msg );
+
       // enter event loop for this thread
       QEventLoop el;
       el.exec();
@@ -67,6 +71,42 @@ namespace core {
    void Socket::ready_read_slot()
    {
       cout << "socket: reading data..." << endl;
+
+      cout << "  reading header..." << endl;
+
+      QByteArray ba = qt_socket_->read( sizeof( Header) );
+      QDataStream ds(ba);
+
+      Header h;
+      ds >> h;
+
+      cout << "    - type: " << h.type << endl;
+
+      switch( h.type ) {
+      case MSG_USERID_REQUEST_ACCESS: 
+      {
+         QByteArray ba2 = qt_socket_->read( sizeof( RequestUserIdAccessMsg ) );
+         QDataStream ds2(ba2);
+
+         RequestUserIdAccessMsg ru;
+         ds2 >> ru;
+
+         cout << "Request user_id : " << ru.user_id << endl;
+         break;
+      }
+      default:
+      {
+         QByteArray msg, msg2;
+         do {
+            msg2 = qt_socket_->read(1024);
+            msg = msg + msg2;
+         } while( msg2.size() );
+
+         cout << "socket: data->  " << msg.toStdString() << endl;
+         break;
+      }
+      }
+
    }
 
    void Socket::bytes_written_slot( qint64 b )
