@@ -8,6 +8,8 @@ using namespace std;
 
 namespace core {
 
+   int Server::client_dni_counter = 5000;
+
    Server::Server( QObject * parent )
    : QTcpServer( parent ),
       threadpool_(0)

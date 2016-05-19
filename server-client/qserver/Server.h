@@ -10,6 +10,8 @@ namespace core {
    class Server : public QTcpServer {
       Q_OBJECT
    public:
+      static int client_dni_counter;
+
       Server( QObject * parent = nullptr );
       
       ~Server();

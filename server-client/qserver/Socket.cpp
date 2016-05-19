@@ -1,4 +1,5 @@
 #include "Socket.h"
+#include "Server.h"
 #include "qcore/Messages.h"
 
 #include <QtCore/QEventLoop>
@@ -45,8 +46,28 @@ namespace core {
      
       qt_socket_->setSocketDescriptor( descriptor_ );
 
-      QByteArray msg = "Hi guy! I'm the Walrus";
-      qt_socket_->write( msg );
+      // Asign name to new client
+      // Server::client_id = 5000;
+
+      AssignNameMsg am;
+      am.name = QString("client_dni_") + QString::number( Server::client_dni_counter++ );
+      QByteArray ba;
+      QDataStream ds( &ba, QIODevice::WriteOnly );
+
+      ds << am.header;
+      ds << am;
+
+      qt_socket_->write( ba );
+
+      qt_socket_->waitForBytesWritten();
+
+      // QDataStream ds;
+      // ds << am.header;
+      // ds << 
+      //
+      //
+      // QByteArray msg = "Hi guy! I'm the Walrus";
+      // qt_socket_->write( msg );
 
       // enter event loop for this thread
       QEventLoop el;

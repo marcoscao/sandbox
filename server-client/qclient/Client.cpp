@@ -50,7 +50,43 @@ namespace core {
 
    void Client::ready_read_slot()
    {
-      cout << "client: ready_readt" << endl;
+      cout << "client: ready_read" << endl;
+
+      cout << "  reading header..." << endl;
+
+      QByteArray ba = socket_.read( sizeof( Header) );
+      QDataStream ds(ba);
+
+      Header h;
+      ds >> h;
+
+      cout << "    - type: " << h.type << endl;
+
+      switch( h.type ) {
+      case MSG_ASSIGN_NAME: 
+      {
+         QByteArray ba2 = socket_.read( sizeof( AssignNameMsg ) );
+         QDataStream ds2(ba2);
+
+         AssignNameMsg ru;
+         ds2 >> ru;
+
+         cout << "Assigned name by server is : " << ru.name.toStdString() << endl;
+         break;
+      }
+      default:
+      {
+         QByteArray msg, msg2;
+         do {
+            msg2 = socket_.read(1024);
+            msg = msg + msg2;
+         } while( msg2.size() );
+
+         cout << "socket: data->  " << msg.toStdString() << endl;
+         break;
+      }
+      }
+
       
       QByteArray msg;
       QByteArray msg2;
