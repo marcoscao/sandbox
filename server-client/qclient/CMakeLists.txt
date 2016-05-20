@@ -8,7 +8,7 @@ set( SOURCES
 
 add_executable( qclient ${SOURCES} )
 
-target_link_libraries( qclient Qt5::Widgets Qt5::Network )
+target_link_libraries( core qclient Qt5::Widgets Qt5::Network )
 
 install( TARGETS qclient DESTINATION bin )
 

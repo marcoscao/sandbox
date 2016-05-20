@@ -74,6 +74,7 @@ message( "* qt include dirs : ${QT_INCLUDE_DIRS}" )
 message( "* TESTS_OUTPUT_DIR : ${TESTS_OUTPUT_DIR}" )
 
 
+add_subdirectory( qcore )
 add_subdirectory( qserver )
 add_subdirectory( qclient )
 
