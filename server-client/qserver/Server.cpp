@@ -8,7 +8,7 @@ using namespace std;
 
 namespace core {
 
-   int Server::client_dni_counter = 5000;
+   QAtomicInt Server::client_dni_counter_ = 5000;
 
    Server::Server( QObject * parent )
    : QTcpServer( parent ),
@@ -21,6 +21,12 @@ namespace core {
    Server::~Server() 
    {
       cout << "Server destroyed" << endl;
+   }
+
+   int Server::new_client_dni()
+   {
+		// atomic operation. returns old value
+	    return client_dni_counter_++;
    }
 
    void Server::start()

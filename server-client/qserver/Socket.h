@@ -3,10 +3,13 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QRunnable>
+#include <memory>
 
 class QTcpSocket;
 
 namespace core {
+
+	struct userid_access_request_body;
 
    class Socket : public QObject, public QRunnable {
       Q_OBJECT
@@ -28,9 +31,13 @@ namespace core {
 
       void ready_read_slot();
 
+   		void userid_access_request_slot( std::unique_ptr< userid_access_request_body >  );
+
    private:
       int descriptor_;
       QTcpSocket * qt_socket_;
+
+
    };
 
 }

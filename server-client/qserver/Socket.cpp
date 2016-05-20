@@ -13,7 +13,8 @@ namespace core {
    Socket::Socket( QObject * parent )
    : QObject( parent ),
       descriptor_(0),
-      qt_socket_(0)
+      qt_socket_(0),
+	  msg_mngr_()
    {
 
       cout << "socket: starting socket..." << endl;
@@ -37,6 +38,9 @@ namespace core {
          return;
       }
 
+	  connect( &msg_mngr_, SIGNAL( userid_access_request_sig( std::unique_ptr< userid_access_request_body > ) ), 
+				  this, SLOT( userid_acces_request_slot( std::unique_ptr< userid_access_request_body > ) ) );
+
       qt_socket_ = new QTcpSocket();
 
       connect( qt_socket_, SIGNAL( connected() ), this, SLOT( connected_slot() ) );
@@ -50,24 +54,16 @@ namespace core {
       // Server::client_id = 5000;
 
       AssignNameMsg am;
-      am.name = QString("client_dni_") + QString::number( Server::client_dni_counter++ );
+      am.name = QString("client_dni_") + QString::number( Server::new_client_dni() );
       QByteArray ba;
       QDataStream ds( &ba, QIODevice::WriteOnly );
 
-      ds << am.header;
-      ds << am;
+      //ds << am.header;
+      //ds << am;
+		ds << am;
 
       qt_socket_->write( ba );
-
       qt_socket_->waitForBytesWritten();
-
-      // QDataStream ds;
-      // ds << am.header;
-      // ds << 
-      //
-      //
-      // QByteArray msg = "Hi guy! I'm the Walrus";
-      // qt_socket_->write( msg );
 
       // enter event loop for this thread
       QEventLoop el;
@@ -93,7 +89,11 @@ namespace core {
    {
       cout << "socket: reading data..." << endl;
 
-      cout << "  reading header..." << endl;
+      //cout << "  reading header..." << endl;
+
+	  msg_mngr_.dispatch_message( qt_socket_ );
+
+		return;
 
       QByteArray ba = qt_socket_->read( sizeof( Header) );
       QDataStream ds(ba);
@@ -133,5 +133,23 @@ namespace core {
    void Socket::bytes_written_slot( qint64 b )
    {
       cout << "socket: bytes written: " << b << endl;
+   }
+
+   void Socket::userid_access_request_slot( std::unique_ptr< userid_access_request_body > st )
+   {
+	   // at this point header should be read
+		//QByteArray ba = qt_socket_->read( sizeof( UserIdAccessRequestMsg ) );
+        //QDataStream ds(ba);
+
+        //userid_access_request_body st;
+        //ds >> st;
+
+        cout << "Client : " << st->client_dni;
+        cout << " trying to request access for user_id : " << st->user_id << endl;
+
+		// Check if user has been entered previously
+
+		// answer true/false
+
    }
 }

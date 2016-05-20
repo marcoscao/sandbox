@@ -2,6 +2,7 @@
 #define QSERVER_SERVER_H__
 
 #include <QtNetwork/QTcpServer>
+#include <QtCore/QAtomicInt>
 
 class QThreadPool;
 
@@ -10,7 +11,6 @@ namespace core {
    class Server : public QTcpServer {
       Q_OBJECT
    public:
-      static int client_dni_counter;
 
       Server( QObject * parent = nullptr );
       
@@ -18,11 +18,14 @@ namespace core {
 
       void start();
 
+	  int new_client_dni();
+
    protected:
       virtual void incomingConnection( qintptr );
 
    private:
       QThreadPool * threadpool_;
+      static QAtomicInt client_dni_counter_;
    };
 
 }
