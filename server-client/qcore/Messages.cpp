@@ -22,29 +22,74 @@ namespace core {
    }
 
 
-   QDataStream & operator<<( QDataStream & out, AssignNameMsg const & a )
+   QDataStream & operator<<( QDataStream & out, assign_name_body const & st )
    {
-      out << a.name;
+      out << st.name;
       return out;
    }
 
-   QDataStream & operator>>( QDataStream & out, AssignNameMsg & a )
+   QDataStream & operator>>( QDataStream & out, assign_name_body & st )
    {
-      out >> a.name;
+      out >> st.name;
       return out;
    }
 
-   QDataStream & operator<<( QDataStream & out, RequestUserIdAccessMsg const & a )
+   QDataStream & operator<<( QDataStream & out, userid_access_request_body const & st )
    {
-      out << a.user_id;
+      out << st.user_id;
+      out << st.client_dni;
       return out;
    }
 
-   QDataStream & operator>>( QDataStream & out, RequestUserIdAccessMsg & a )
+   QDataStream & operator>>( QDataStream & out, userid_access_request_body & st )
    {
-      out >> a.user_id;
+      out >> st.user_id;
+      out >> st.client_dni;
       return out;
    }
+
+   QDataStream & operator<<( QDataStream & out, userid_authorization_body const & st )
+   {
+      out << st.user_id;
+      out << st.authorized;
+      out << st.client_dni;
+      return out;
+   }
+
+   QDataStream & operator>>( QDataStream & out, userid_access_authorization_body & st )
+   {
+      out >> st.user_id;
+      out >> st.authorized;
+      out >> st.client_dni;
+      return out;
+   }
+
+
+//   QDataStream & operator<<( QDataStream & out, AssignNameMsg const & a )
+//   {
+//      out << a.header();
+//      out << a.body();
+//      return out;
+//   }
+//
+//   QDataStream & operator>>( QDataStream & out, AssignNameMsg & a )
+//   {
+//      out >> a.header();
+//      out >> a.body();
+//      return out;
+//   }
+
+//   QDataStream & operator<<( QDataStream & out, RequestUserIdAccessMsg const & r )
+//   {
+//      out << r.header();
+//      return out;
+//   }
+//
+//   QDataStream & operator>>( QDataStream & out, RequestUserIdAccessMsg & r )
+//   {
+//      out >> a.user_id;
+//      return out;
+//   }
 
 }
 
