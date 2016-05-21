@@ -72,9 +72,10 @@ message( "* boost include dirs: ${Boost_INCLUDE_DIR}" )
 message( "* boost library dirs: ${Boost_LIBRARY_DIRS}" )
 message( "* qt include dirs : ${QT_INCLUDE_DIRS}" )
 message( "* TESTS_OUTPUT_DIR : ${TESTS_OUTPUT_DIR}" )
+message( "* TESTS_OUTPUT_DIR : ${TESTS_OUTPUT_DIR}" )
 
 
-add_subdirectory( qcore )
+add_subdirectory( core )
 add_subdirectory( qserver )
 add_subdirectory( qclient )
 

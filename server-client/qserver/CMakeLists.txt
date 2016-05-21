@@ -9,7 +9,7 @@ set( SOURCES
 
 add_executable( qserver ${SOURCES} )
 
-target_link_libraries( core qserver Qt5::Widgets Qt5::Network )
+target_link_libraries( qserver core Qt5::Widgets Qt5::Network )
 
 install( TARGETS qserver DESTINATION bin )
 

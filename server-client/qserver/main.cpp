@@ -13,9 +13,10 @@ int main(int argc, char** argv )
    try {
       QCoreApplication app(argc,argv);
 
-      core::Server srv;
-      srv.start();
+      //core::Server srv;
+      //srv.start();
 
+      core::Server::instance().start();
       return app.exec();
    }
    catch( std::exception const & e ) {
