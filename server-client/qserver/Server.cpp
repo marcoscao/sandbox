@@ -1,7 +1,8 @@
 #include "Server.h"
-#include "Socket.h"
+#include "Connection.h"
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QFile>
 #include <QtCore/QThreadPool>
 #include <iostream>
 
@@ -43,6 +44,13 @@ namespace core {
    {
       listen();
 
+      cout << "Starting server..." << endl;
+
+      cout << "note: server will shutdown automatically after an inactivity period of " << INACTIVITY_TIMEOUT / 1000 << " seconds" << endl;
+      //cout << " -> active threads: " << threadpool_->activeThreadCount() << endl;
+
+      cout << endl;
+
       cout << "Server starting to listen on address " << serverAddress().toString().toStdString();
       cout << " and port " << serverPort() << endl;
 
@@ -80,11 +88,12 @@ namespace core {
    {
       cout << "server: incomingConnection " << endl;
 
-      Socket * s = new Socket();
-      s->setAutoDelete(true);
-      s->set_descriptor( handle );
+      Connection * c = new Connection();
+      c->setAutoDelete(true);
+      c->set_descriptor( handle );
 
-      threadpool_->start( s );
+      QMutexLocker lock( &mutex_ );
+      threadpool_->start( c );
       reset_inactivity_timer(); 
    }
 
@@ -109,19 +118,29 @@ namespace core {
 
    void Server::dump_business_clients_()
    {
+      QFile f("server_log.log");
+      if( f.open( QIODevice::WriteOnly | QIODevice::Text ) == false ) {
+         cout << "server: error trying to create log file" << endl;
+         return;
+      }
+
+      QTextStream ts( &f );
+
       std::for_each( begin(business_clients_), end(business_clients_), 
-            []( BusinessClientsCt::value_type const & kv ) 
+            [&ts]( BusinessClientsCt::value_type const & kv ) 
             {
-               cout << "client: " << kv.first << endl;
+               ts << "client: " << kv.first.c_str() << endl;
 
                std::for_each( begin(kv.second), end(kv.second),
-                  []( BusinessUsersCt::value_type const & v ) 
+                  [&ts]( BusinessUsersCt::value_type const & v ) 
                   {
-                     cout << "  user id : " << v << endl;
+                     ts << "  user id : " << v << endl;
                   }
                );
             }
       );
+
+      f.close();
    }
 }
 

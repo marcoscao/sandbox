@@ -9,37 +9,47 @@ using namespace std;
 
 namespace core {
 
-   /*
-    * Pending to read in chunks
-    */
-   template<typename T_BODY>
-   std::shared_ptr< T_BODY > create_body( QTcpSocket & socket, int body_size )
+   MsgManager::MsgManager( )
+   : socket_()
    {
-      std::shared_ptr< T_BODY > p_st = std::make_shared< T_BODY >();
-      QByteArray ba = socket.read( body_size );
+      qRegisterMetaType< assign_client_name_body >();
+      qRegisterMetaType< std::shared_ptr< assign_client_name_body > >();
+      qRegisterMetaType< userid_access_request_body >();
+      qRegisterMetaType< std::shared_ptr< core::userid_access_request_body > >();
+      
+      socket_ = std::make_unique< QTcpSocket >(); 
 
-      QDataStream ds(ba);
-      ds >> *p_st;
-
-      return p_st;
+      connect( socket_.get(), SIGNAL( connected() ), this, SLOT( connected_slot() ) );
+      connect( socket_.get(), SIGNAL( disconnected() ), this, SLOT( disconnected_slot() ) );
+      connect( socket_.get(), SIGNAL( bytesWritten(qint64) ), this, SLOT( bytes_written_slot(qint64) ) );
+      connect( socket_.get(), SIGNAL( readyRead() ), this, SLOT( ready_read_slot() ) );
    }
 
-
-   MsgManager::MsgManager()
+   void MsgManager::set_descriptor( int d )
    {
-      // qRegisterMetaType< core::assign_client_name_body >();
-      // qRegisterMetaType< std::shared_ptr< assign_client_name_body > >();
-      // qRegisterMetaType< core::userid_access_request_body >();
-      // qRegisterMetaType< std::shared_ptr< userid_access_request_body > >();
+      socket_->setSocketDescriptor( d );
    }
 
-   void MsgManager::dispatch_message( QTcpSocket & socket )
+   bool MsgManager::connect_to_host( QHostAddress const & host_addr, int server_port )
+   {
+      socket_->connectToHost( host_addr, server_port );
+
+      if( socket_->waitForConnected( 3000 ) == false ) {
+         cout << "timeout trying to connect to host and port: " << server_port << endl;
+         //emit quit_signal();
+         return false; 
+      }
+
+      return true;
+   }
+
+   void MsgManager::dispatch_message( )
    {
       //cout << "* Dispatching message..." << endl;
 
       // Read header. 
       // note: header uses 2 ints, ( type and body_size ) so real size is sizeof( Header ) which could be 8, 16, ...
-      QByteArray ba = socket.read( sizeof( Header) );
+      QByteArray ba = socket_->read( sizeof( Header) );
       QDataStream ds(ba);
 
       Header h;
@@ -48,16 +58,15 @@ namespace core {
       switch( h.type ) {
          
          case MSG_ASSIGN_CLIENT_NAME : 
-            emit assign_client_name_sig( create_body<assign_client_name_body>( socket, h.body_size ) ); 
+            emit assign_client_name_sig( create_body<assign_client_name_body>( h.body_size ) ); 
             break;
 
          case MSG_USERID_ACCESS_REQUEST	: 
-            emit userid_access_request_sig( create_body<userid_access_request_body>( socket, h.body_size ) ); 
+            emit userid_access_request_sig( create_body<core::userid_access_request_body>( h.body_size ) ); 
             break;
 
          case MSG_USERID_AUTHORIZATION : 
-            emit userid_authorization_sig( create_body<userid_authorization_body>( socket, h.body_size ) ); 
-         //   emit userid_authorization_sig(); 
+            emit userid_authorization_sig( create_body<userid_authorization_body>( h.body_size ) ); 
             break;
          
          case MSG_CLIENT_FINISHED : 
@@ -72,6 +81,27 @@ namespace core {
             emit undefined_message_type_sig( h ); 
             break;
       }
+   }
+
+   void MsgManager::connected_slot()
+   {
+      cout << "socket: client connected" << endl;
+   }
+
+   void MsgManager::disconnected_slot()
+   {
+      cout << "socket: client disconnected" << endl;
+   }
+
+   void MsgManager::ready_read_slot()
+   {
+      //cout << "socket: reading client data..." << endl;
+      dispatch_message();
+   }
+
+   void MsgManager::bytes_written_slot( qint64 b )
+   {
+      //cout << "socket: bytes written: " << b << endl;
    }
 
 } // end namespace

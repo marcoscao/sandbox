@@ -1,3 +1,7 @@
+/*
+ * Declares and defines the Header and Bodies for the different messages
+ */
+
 #ifndef CORE_MESSAGES_H_
 #define CORE_MESSAGES_H_
 
@@ -6,6 +10,9 @@
 
 namespace core {
 
+   /*
+    * Messages types identifiers
+    */
    enum MessageType {
       MSG_UNDEFINED = 0,
       MSG_ASSIGN_CLIENT_NAME = 1,
@@ -15,7 +22,10 @@ namespace core {
       MSG_SERVER_SHUTDOWN	
    };
 
-
+   /*
+    * Header part of the message
+    * type  : message type ( MessageType enum value )
+    */
    struct Header 
    {
       int type;
@@ -26,7 +36,9 @@ namespace core {
    QDataStream & operator>>( QDataStream & out, Header & );
 
 
-
+   /*
+    * message base class, not to usually be used directly
+    */
    class MsgBase {
    public:
 
@@ -52,7 +64,11 @@ namespace core {
 
 
 
-
+   /*
+    * Template to define and declare a complete message
+    *
+    * Sets the body struct to be used as well as the message type
+    */
    template<typename T_BODY, int msg_type >
    class Msg : public MsgBase {
    public:
@@ -62,15 +78,15 @@ namespace core {
       {
       }
 
-	  const T_BODY & body() const
-	  {
-		  return body_;
-	  }
+       const T_BODY & body() const
+       {
+               return body_;
+       }
 
-	  T_BODY & body()
-	  {
-		  return body_;
-	  }
+       T_BODY & body()
+       {
+               return body_;
+       }
 
       template<typename>
       friend QDataStream & operator<<( QDataStream & out, T_BODY const & msg );
@@ -97,6 +113,9 @@ namespace core {
    }
 
 
+   /*
+    * body-part to assign a name to the connected client
+    */
    struct assign_client_name_body {
       QString name;
    };
@@ -106,11 +125,10 @@ namespace core {
    QDataStream & operator<<( QDataStream & out, assign_client_name_body const & );
    QDataStream & operator>>( QDataStream & out, assign_client_name_body & );
 
-   //QDataStream & operator<<( QDataStream & out, AssignNameMsg const & );
-   //QDataStream & operator>>( QDataStream & out, AssignNameMsg & );
 
-
-
+   /*
+    * body part to request for user id access
+    */
    struct userid_access_request_body  
    {   
       int user_id;
@@ -122,10 +140,11 @@ namespace core {
 
    QDataStream & operator<<( QDataStream & out, core::userid_access_request_body const & );
    QDataStream & operator>>( QDataStream & out, core::userid_access_request_body & );
-   //QDataStream & operator<<( QDataStream & out, core::UserIdAccessRequestMsg const & );
-   //QDataStream & operator>>( QDataStream & out, core::UserIdAccessRequestMsg & );
 
 
+   /*
+    * body part to response a user-id access request
+    */
    struct userid_authorization_body  
    {   
       int user_id;
@@ -137,9 +156,6 @@ namespace core {
 
    QDataStream & operator<<( QDataStream & out, userid_authorization_body const & );
    QDataStream & operator>>( QDataStream & out, userid_authorization_body & );
-
-   //QDataStream & operator<<( QDataStream & out, UserIdAuthorizationMsg const & );
-   //QDataStream & operator>>( QDataStream & out, UserIdAuthorizationMsg & );
 
 }
 

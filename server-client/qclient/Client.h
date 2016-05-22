@@ -1,13 +1,17 @@
+/*
+ * Client class
+ * Qt 5.6 based one
+ *
+ */
+
 #ifndef QCLIENT_CLIENT_H__
 #define QCLIENT_CLIENT_H__
 
 #include "core/MsgManager.h"
 
+#include <QtCore/QTime>
 #include <QtCore/QTimer>
-#include <QtNetwork/QTcpSocket>
 #include <memory>
-
-class QTcpSocket;
 
 namespace core {
 
@@ -24,13 +28,13 @@ namespace core {
       void start( int server_port );
    
    public slots:
-      void connected_slot();
-
-      void disconnected_slot();
-
-      void bytes_written_slot( qint64 );
-
-      void ready_read_slot();
+      // void connected_slot();
+      //
+      // void disconnected_slot();
+      //
+      // void bytes_written_slot( qint64 );
+      //
+      // void ready_read_slot();
 
       void timeout_slot_();
 
@@ -42,15 +46,20 @@ namespace core {
       void quit_signal();
 
    private:
-      using UsersCt = std::vector< int >;
+      using UsersCt = QHash<int, QTime>; 
 
       static const int MAX_AVAILABLE_USERS = 15;
 
-      QTcpSocket socket_;
       QTimer timer_;
       MsgManager msg_mngr_;
       QString assigned_name_;
+      
       UsersCt available_users_;
+      
+      UsersCt::iterator send_user_counter_it_; 
+      UsersCt::iterator received_user_counter_it_; 
+
+      void initialize_users_();
    };
 
 }

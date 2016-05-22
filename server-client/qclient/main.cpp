@@ -22,17 +22,10 @@ int main(int argc, char** argv )
 
       core::Client cl;
       QObject::connect( &cl, SIGNAL(quit_signal()), QCoreApplication::instance(), SLOT(quit() ), Qt::DirectConnection );
+   
+      cout << "client trying to connect" << endl;
+      cl.start( stoi( argv[1] ) );
 
-
-      //QTimer t;
-      //QObject::connect( &t, &QTimer::timeout, [&]() {
-         
-         cout << "client trying to connect" << endl;
-         cl.start( stoi( argv[1] ) );
-       //  } );
-
-
-      //t.start( 2000 );
       cout << "entering event-loop" << endl;
 
       return app.exec();

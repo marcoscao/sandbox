@@ -1,3 +1,13 @@
+/*
+ * Server class
+ * Qt 5.6 based
+ *
+ * A threadpool launchs a thread per client connection ( until reach a maximum of N )
+ * Each Connection class ( Runnable ) manages the communication between specific client and server
+ *
+ * Singleton class
+ */
+
 #ifndef QSERVER_SERVER_H__
 #define QSERVER_SERVER_H__
 
@@ -23,7 +33,7 @@ namespace core {
 
       static Server & instance();
 
-      static int new_client_dni();
+      int new_client_dni();
 
       void start();
 
