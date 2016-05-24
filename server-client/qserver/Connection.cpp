@@ -77,7 +77,7 @@ namespace core {
       am.body().name = connected_client_name;
 
       // sleep to simulate server heavy load
-      QThread::msleep( 3200 );
+      //QThread::msleep( 1200 );
       msg_mngr_->send_message( am );
 
       // Register business client_name
@@ -94,7 +94,7 @@ namespace core {
       ua.body().user_id = st->user_id;
       ua.body().client_name = st->client_name;
 
-      QThread::msleep( 2600 );
+      //QThread::msleep( 2600 );
       msg_mngr_->send_message( ua );
    }
 }

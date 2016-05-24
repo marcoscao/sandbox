@@ -2,6 +2,7 @@
  * Client class
  * Qt 5.6 based one
  *
+ * @author: marcos santamaria cao
  */
 
 #ifndef QCLIENT_CLIENT_H__
@@ -48,7 +49,7 @@ namespace core {
    private:
       using UsersCt = QHash<int, QTime>; 
 
-      static const int MAX_AVAILABLE_USERS = 15;
+      static const int MAX_AVAILABLE_USERS = 250;
 
       QTimer timer_;
       MsgManager msg_mngr_;

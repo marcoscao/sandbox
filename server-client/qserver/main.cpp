@@ -1,3 +1,7 @@
+/*
+ * @author: marcos santamaria cao
+ */
+
 #include "Server.h"
 
 #include <QtCore/QCoreApplication>

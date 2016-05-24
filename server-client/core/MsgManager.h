@@ -1,5 +1,7 @@
 /*
  * process received message ( header/body ) and send specific signal with the message body
+ *
+ * @author: marcos santamaria cao
  */
 
 #ifndef CORE_MSGMANAGER_H__

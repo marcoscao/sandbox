@@ -1,5 +1,7 @@
 /*
  * Declares and defines the Header and Bodies for the different messages
+ *
+ * @author: marcos santamaria cao
  */
 
 #ifndef CORE_MESSAGES_H_

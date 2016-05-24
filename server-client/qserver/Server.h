@@ -6,6 +6,8 @@
  * Each Connection class ( Runnable ) manages the communication between specific client and server
  *
  * Singleton class
+ *
+ * @author: marcos santamaria cao
  */
 
 #ifndef QSERVER_SERVER_H__
@@ -58,7 +60,7 @@ namespace core {
       /*
        * inactivity time before shutdown gently
        */
-      static const int INACTIVITY_TIMEOUT = 20000;
+      static const int INACTIVITY_TIMEOUT = 60000;
 
       QThreadPool * threadpool_;
       static QAtomicInt client_dni_counter_;

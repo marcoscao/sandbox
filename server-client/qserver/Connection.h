@@ -1,6 +1,8 @@
 /*
  * Connection class.   
  * Runnable ( thread from threadpool ), manages a live connection with a connected client  
+ *
+ * @author: marcos santamaria cao
  */
 
 #ifndef QSERVER_SOCKET_H__

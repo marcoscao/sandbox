@@ -1,3 +1,7 @@
+/*
+ * @author: marcos santamaria cao
+ */
+
 #include "Client.h"
 
 #include <QtCore/QCoreApplication>
